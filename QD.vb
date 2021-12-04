@@ -21,11 +21,15 @@ Public Class QD
     Private barramento As Barramento
     Private circuitos As List(Of Circuito)
 
-    Public Sub New(_nome As String, _derivaDe As String, _circuitos As List(Of Circuito))
+    Private materiais As List(Of Material)
+
+    Public Sub New(_nome As String, _derivaDe As String, _circuitos As List(Of Circuito), _materiais As List(Of Material))
 
         nome = _nome
         derivaDe = _derivaDe
         circuitos = _circuitos
+
+        materiais = _materiais
 
         OrdenaCircuitos()
         DistribuiFases()
@@ -38,168 +42,8 @@ Public Class QD
 
         barramento = New Barramento(disjuntor)
 
-        MsgBox(esquema.ToString + "/" + tensao.ToString + "/" + potencia_total.ToString + "/" + fases.ToString + "/" + potencia_r.ToString + "/" + potencia_s.ToString + "/" + potencia_t.ToString + "/" +
-               secao.ToString + "/" + disjuntor.ToString + "/" + barramento.GetTamanho.ToString)
-
-    End Sub
-
-    Private Sub SomaPotenciaTotal()
-
-        For i = 0 To (circuitos.Count - 1)
-            potencia_total += circuitos(i).GetPotenciaTotal
-        Next
-
-    End Sub
-
-    Private Sub SomaPotenciaFases()
-
-        For i = 0 To (circuitos.Count - 1)
-            potencia_r += circuitos(i).GetPotenciaR
-            potencia_s += circuitos(i).GetPotenciaS
-            potencia_t += circuitos(i).GetPotenciaT
-        Next
-
-    End Sub
-
-    Private Sub DefineEsquema()
-
-        Dim numeroDeFases = 0
-
-        If potencia_r > 0 Then
-            numeroDeFases += 1
-        End If
-
-        If potencia_s > 0 Then
-            numeroDeFases += 1
-        End If
-
-        If potencia_t > 0 Then
-            numeroDeFases += 1
-        End If
-
-        If numeroDeFases > 0 Then
-            esquema = numeroDeFases.ToString + "F+N+T"
-        Else
-            MsgBox("Número de fases igual a 0 (zero)")
-        End If
-
-    End Sub
-
-    Private Sub DefineTensao()
-
-        If esquema = "F+N+T" Then
-            tensao = "220"
-        ElseIf esquema = "2F+N+T" Or esquema = "3F+N+T" Then
-            tensao = "380/220"
-        End If
-
-    End Sub
-
-    Private Sub DefineFases()
-
-        fases = ""
-
-        If potencia_r > 0 Then
-            fases = "R"
-        End If
-
-        If potencia_s > 0 Then
-            If fases = "" Then
-                fases += "S"
-            Else
-                fases += "+S"
-            End If
-        End If
-
-        If potencia_t > 0 Then
-            If fases = "" Then
-                fases += "T"
-            Else
-                fases += "+T"
-            End If
-        End If
-
-    End Sub
-
-    Private Sub DimensionaSecaoEDisjuntor()
-
-        If potencia_total <= 0 Then
-
-            MsgBox("Potência total <= 0")
-
-        Else
-
-            If esquema = "F+N+T" Then
-
-                Select Case potencia_total
-                    Case <= 0
-                        Exit Select
-                    Case < 6000
-                        secao = 6.0
-                        disjuntor = 32
-                    Case < 8000
-                        secao = 10.0
-                        disjuntor = 40
-                    Case < 11000
-                        secao = 10.0
-                        disjuntor = 50
-                    Case < 13000
-                        secao = 16.0
-                        disjuntor = 63
-                    Case < 15000
-                        secao = 16.0
-                        disjuntor = 70
-                End Select
-
-
-            ElseIf esquema = "2F+N+T" Then
-
-                Select Case potencia_total
-                    Case <= 0
-                        Exit Select
-                    Case < 20000
-                        secao = 10.0
-                        disjuntor = 50
-                    Case < 25000
-                        secao = 16.0
-                        disjuntor = 63
-                End Select
-
-            ElseIf esquema = "3F+N+T" Then
-
-                Select Case potencia_total
-                    Case <= 0
-                        Exit Select
-                    Case < 25000
-                        secao = 6.0
-                        disjuntor = 32
-                    Case < 30000
-                        secao = 10.0
-                        disjuntor = 40
-                    Case < 35000
-                        secao = 10.0
-                        disjuntor = 50
-                    Case < 40000
-                        secao = 16.0
-                        disjuntor = 63
-                    Case < 50000
-                        secao = 25.0
-                        disjuntor = 70
-                    Case < 65000
-                        secao = 35.0
-                        disjuntor = 100
-                    Case < 75000
-                        secao = 50.0
-                        disjuntor = 125
-                End Select
-
-            Else
-
-                MsgBox("Esquema não definido")
-
-            End If
-
-        End If
+        'MsgBox(esquema.ToString + "/" + tensao.ToString + "/" + potencia_total.ToString + "/" + fases.ToString + "/" + potencia_r.ToString + "/" + potencia_s.ToString + "/" + potencia_t.ToString + "/" +
+        'secao.ToString + "/" + disjuntor.ToString + "/" + barramento.GetTamanho.ToString)
 
     End Sub
 
@@ -331,6 +175,196 @@ end_of_for_01:
 
     End Sub
 
+    Private Sub SomaPotenciaTotal()
+
+        For i = 0 To (circuitos.Count - 1)
+            potencia_total += circuitos(i).GetPotenciaTotal
+        Next
+
+    End Sub
+
+    Private Sub SomaPotenciaFases()
+
+        For i = 0 To (circuitos.Count - 1)
+            potencia_r += circuitos(i).GetPotenciaR
+            potencia_s += circuitos(i).GetPotenciaS
+            potencia_t += circuitos(i).GetPotenciaT
+        Next
+
+    End Sub
+
+    Private Sub DefineEsquema()
+
+        Dim numeroDeFases = 0
+
+        If potencia_r > 0 Then
+            numeroDeFases += 1
+        End If
+
+        If potencia_s > 0 Then
+            numeroDeFases += 1
+        End If
+
+        If potencia_t > 0 Then
+            numeroDeFases += 1
+        End If
+
+        If numeroDeFases > 0 Then
+            esquema = numeroDeFases.ToString + "F+N+T"
+        Else
+            MsgBox("Número de fases igual a 0 (zero)")
+        End If
+
+    End Sub
+
+    Private Sub DefineFases()
+
+        fases = ""
+
+        If potencia_r > 0 Then
+            fases = "R"
+        End If
+
+        If potencia_s > 0 Then
+            If fases = "" Then
+                fases += "S"
+            Else
+                fases += "+S"
+            End If
+        End If
+
+        If potencia_t > 0 Then
+            If fases = "" Then
+                fases += "T"
+            Else
+                fases += "+T"
+            End If
+        End If
+
+    End Sub
+
+    Private Sub DefineTensao()
+
+        If esquema = "F+N+T" Then
+            tensao = "220"
+        ElseIf esquema = "2F+N+T" Or esquema = "3F+N+T" Then
+            tensao = "380/220"
+        End If
+
+    End Sub
+
+    Private Sub DimensionaSecaoEDisjuntor()
+
+        If potencia_total <= 0 Then
+
+            MsgBox("Potência total <= 0")
+
+        Else
+
+            If esquema = "F+N+T" Then
+
+                Select Case potencia_total
+                    Case <= 0
+                        Exit Select
+                    Case < 6000
+                        secao = 6.0
+                        disjuntor = 32
+                    Case < 8000
+                        secao = 10.0
+                        disjuntor = 40
+                    Case < 11000
+                        secao = 10.0
+                        disjuntor = 50
+                    Case < 13000
+                        secao = 16.0
+                        disjuntor = 63
+                    Case < 15000
+                        secao = 16.0
+                        disjuntor = 70
+                End Select
+
+
+            ElseIf esquema = "2F+N+T" Then
+
+                Select Case potencia_total
+                    Case <= 0
+                        Exit Select
+                    Case < 20000
+                        secao = 10.0
+                        disjuntor = 50
+                    Case < 25000
+                        secao = 16.0
+                        disjuntor = 63
+                End Select
+
+            ElseIf esquema = "3F+N+T" Then
+
+                Select Case potencia_total
+                    Case <= 0
+                        Exit Select
+                    Case < 25000
+                        secao = 6.0
+                        disjuntor = 32
+                    Case < 30000
+                        secao = 10.0
+                        disjuntor = 40
+                    Case < 35000
+                        secao = 10.0
+                        disjuntor = 50
+                    Case < 40000
+                        secao = 16.0
+                        disjuntor = 63
+                    Case < 50000
+                        secao = 25.0
+                        disjuntor = 70
+                    Case < 65000
+                        secao = 35.0
+                        disjuntor = 100
+                    Case < 75000
+                        secao = 50.0
+                        disjuntor = 125
+                End Select
+
+            Else
+
+                MsgBox("Esquema não definido")
+
+            End If
+
+        End If
+
+    End Sub
+
+    <Obsolete>
+    Public Sub DesenhaQC(posicao As Point3d)
+
+        'Acessa a base de dados
+        Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+
+        Dim tabela As New Table
+        tabela = MontaQC(posicao)
+        If tabela <> Nothing Then
+
+            Using trans As Transaction = doc.TransactionManager.StartTransaction()
+
+                Call Canvas.TrocaLayer("MD - Quadro de Cargas")
+
+                Dim bt As BlockTable = CType(trans.GetObject(doc.Database.BlockTableId, OpenMode.ForRead), BlockTable)
+                Dim btr As BlockTableRecord = CType(trans.GetObject(bt(BlockTableRecord.ModelSpace), OpenMode.ForWrite), BlockTableRecord)
+
+                btr.AppendEntity(tabela)
+                trans.AddNewlyCreatedDBObject(tabela, True)
+
+                trans.Commit()
+
+            End Using
+
+        Else
+            MsgBox("Erro ao gerar a tabela: A tabela é nula")
+        End If
+
+    End Sub
+
     <Obsolete>
     Private Function MontaQC(posicao As Point3d)
 
@@ -417,36 +451,6 @@ end_of_for_01:
 
     End Function
 
-    <Obsolete>
-    Public Sub DesenhaQC(posicao As Point3d)
-
-        'Acessa a base de dados
-        Dim doc As Document = Application.DocumentManager.MdiActiveDocument
-
-        Dim tabela As New Table
-        tabela = MontaQC(posicao)
-        If tabela <> Nothing Then
-
-            Using trans As Transaction = doc.TransactionManager.StartTransaction()
-
-                Call Canvas.TrocaLayer("MD - Quadro de Cargas")
-
-                Dim bt As BlockTable = CType(trans.GetObject(doc.Database.BlockTableId, OpenMode.ForRead), BlockTable)
-                Dim btr As BlockTableRecord = CType(trans.GetObject(bt(BlockTableRecord.ModelSpace), OpenMode.ForWrite), BlockTableRecord)
-
-                btr.AppendEntity(tabela)
-                trans.AddNewlyCreatedDBObject(tabela, True)
-
-                trans.Commit()
-
-            End Using
-
-        Else
-            MsgBox("Erro ao gerar a tabela: A tabela é nula")
-        End If
-
-    End Sub
-
     Public Sub DesenhaDU(posicao As Point3d)
 
         'Caso o número de circuitos seja pequeno, define 
@@ -499,7 +503,7 @@ end_of_for_01:
 
     End Sub
 
-    Public Sub DesenhaTerra(posicao As Point3d)
+    Private Sub DesenhaTerra(posicao As Point3d)
 
         DesenhaLinha(posicao, New Point3d(posicao.X, posicao.Y - 20, 0), 3)
         DesenhaLinha(New Point3d(posicao.X - 15, posicao.Y - 20, 0), New Point3d(posicao.X + 15, posicao.Y - 20, 0), 3)
@@ -508,7 +512,7 @@ end_of_for_01:
 
     End Sub
 
-    Public Sub DesenhaRamalEntrada(posicao As Point3d)
+    Private Sub DesenhaRamalEntrada(posicao As Point3d)
 
         Dim doc As Document = Application.DocumentManager.MdiActiveDocument
         Dim db As Database = doc.Database
@@ -596,11 +600,94 @@ end_of_for_01:
 
     End Sub
 
-    'Public Sub PerguntaNomeQD()
+    <Obsolete>
+    Public Sub DesenhaLM(posicao As Point3d)
 
-    '    Dim msgAoUsuario As String = "Digite o nome do Quadro de Distribuição (ex. 'QD01 - Condomínio'): "
-    '    PedeTextoUsuario(msgAoUsuario)
+        'Acessa a base de dados
+        Dim doc As Document = Application.DocumentManager.MdiActiveDocument
 
-    'End Sub
+        Dim tabela As New Table
+        tabela = MontaLM(posicao)
+        If tabela <> Nothing Then
+
+            Using trans As Transaction = doc.TransactionManager.StartTransaction()
+
+                Call Canvas.TrocaLayer("MD - Lista de Materiais")
+
+                Dim bt As BlockTable = CType(trans.GetObject(doc.Database.BlockTableId, OpenMode.ForRead), BlockTable)
+                Dim btr As BlockTableRecord = CType(trans.GetObject(bt(BlockTableRecord.ModelSpace), OpenMode.ForWrite), BlockTableRecord)
+
+                btr.AppendEntity(tabela)
+                trans.AddNewlyCreatedDBObject(tabela, True)
+
+                trans.Commit()
+
+            End Using
+
+        Else
+            MsgBox("Erro ao gerar a tabela: A tabela é nula")
+        End If
+
+    End Sub
+
+    <Obsolete>
+    Private Function MontaLM(posicao As Point3d)
+
+        Dim tabela As Table = New Table()
+
+        With tabela
+
+            Dim headerRows As Integer = 2 'Quantidade de linhas para o cabeçalho
+            Dim rows As Integer = materiais.Count + headerRows 'Quantidade de linhas totais (cabeçalho + conteúdo)
+            Dim columnTextList() As String = {"Material", "Quantidade", "Unidade"} 'Conteúdo das colunas
+            Dim columns As Integer = UBound(columnTextList) - LBound(columnTextList) + 1 'Quantidade de colunas totais (baseado no tamanho do array do conteúdo das colunas)
+
+            .SetSize(rows, columns)
+            .SetRowHeight(16)
+            .SetColumnWidth(100)
+            .Position = posicao
+
+            .SetTextHeight(0, 0, 8)
+            .SetAlignment(0, 0, CellAlignment.MiddleCenter)
+            .SetTextString(0, 0, "Lista de Materiais")
+
+            For indexColumn = 0 To (columns - 1)
+
+                .SetTextHeight(1, indexColumn, 8)
+                .SetAlignment(1, indexColumn, CellAlignment.MiddleCenter)
+                .SetTextString(1, indexColumn, columnTextList(indexColumn))
+
+            Next
+
+            For indexRow = headerRows To (rows - 1)
+
+                For indexColumn = 0 To (columns - 1)
+
+                    .SetTextHeight(indexRow, indexColumn, 8)
+                    .SetAlignment(indexRow, indexColumn, CellAlignment.MiddleCenter)
+
+                    Dim materialRow = indexRow - headerRows
+
+                    Select Case indexColumn
+                        Case 0
+                            .SetTextString(indexRow, indexColumn, materiais(materialRow).GetNome().ToString())
+                            .SetColumnWidth(indexColumn, 300)
+                        Case 1
+                            .SetTextString(indexRow, indexColumn, materiais(materialRow).GetQuantidadeTotal().ToString())
+                        Case 2
+                            .SetTextString(indexRow, indexColumn, "un")
+                    End Select
+
+                Next
+
+            Next
+
+            tabela.GenerateLayout()
+
+        End With
+
+        Return tabela
+
+    End Function
 
 End Class
