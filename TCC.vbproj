@@ -122,6 +122,7 @@
     <Compile Include="Canvas.vb" />
     <Compile Include="InterfaceACAD.vb" />
     <Compile Include="Main.vb" />
+    <Compile Include="Material.vb" />
     <Compile Include="QD.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

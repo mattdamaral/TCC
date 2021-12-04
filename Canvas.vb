@@ -34,7 +34,7 @@ Public Module Canvas
     '------------------------------------------------------------------------------------------------------------------------------------------------
 
     'Seleciona a Layer Atual
-    Public Sub TrocaLayer(nomeDaLayer As String)
+    Public Sub TrocaLayer(nomeLayer As String)
 
         Dim doc As Document = Application.DocumentManager.MdiActiveDocument
         Dim db As Database = doc.Database
@@ -52,25 +52,25 @@ Public Module Canvas
 
                 'Se a Layer existe, obtém seu ID
                 lt = CType(trans.GetObject(db.LayerTableId, OpenMode.ForRead, True, True), LayerTable)
-                layerID = lt.Item(nomeDaLayer)
+                layerID = lt.Item(nomeLayer)
 
                 'Se a Layer foi deletada, recupera a Layer
                 If layerID.IsErased Then
                     lt.UpgradeOpen()
-                    lt.Item(nomeDaLayer).GetObject(OpenMode.ForWrite, True, True).Erase(False)
+                    lt.Item(nomeLayer).GetObject(OpenMode.ForWrite, True, True).Erase(False)
                 End If
 
             Catch ex As Autodesk.AutoCAD.Runtime.Exception
 
                 'Se a Layer não existe, cria uma nova
                 lt = db.LayerTableId.GetObject(OpenMode.ForWrite, True, True)
-                ltr.Name = nomeDaLayer
+                ltr.Name = nomeLayer
                 lt.Add(ltr)
                 'Adiciona a Layer ao Database
                 trans.AddNewlyCreatedDBObject(ltr, True)
                 'Obtém o ID da Layer criada
                 lt = CType(trans.GetObject(db.LayerTableId, OpenMode.ForRead, False), LayerTable)
-                layerID = lt.Item(nomeDaLayer)
+                layerID = lt.Item(nomeLayer)
 
             End Try
 
@@ -85,7 +85,7 @@ Public Module Canvas
 
     '------------------------------------------------------------------------------------------------------------------------------------------------
 
-    Public Sub DesenhaTexto(texto As String, posicao As Point3d, cor As Integer, tamanho As Double)
+    Public Sub DesenhaTexto(texto As String, posicao As Point3d, cor As Integer, altura As Double)
 
         Dim doc As Document = Application.DocumentManager.MdiActiveDocument
         Dim db As Database = doc.Database
@@ -102,7 +102,7 @@ Public Module Canvas
                 dbText.TextString = texto
                 dbText.ColorIndex = cor
                 dbText.Position = posicao
-                dbText.Height = tamanho
+                dbText.Height = altura
                 btr.AppendEntity(dbText)
                 trans.AddNewlyCreatedDBObject(dbText, True)
 
@@ -116,7 +116,7 @@ Public Module Canvas
 
     '------------------------------------------------------------------------------------------------------------------------------------------------
 
-    Public Sub DesenhaPolyline(vertexPos As List(Of Point2d), bulge As Double, startWidth As Double, endWidth As Double, isClosed As Boolean, lineType As String)
+    Public Sub DesenhaPolyline(posVertices As List(Of Point2d), bulge As Double, startWidth As Double, endWidth As Double, isClosed As Boolean, lineType As String)
 
         Dim doc As Document = Application.DocumentManager.MdiActiveDocument
         Dim db As Database = doc.Database
@@ -130,9 +130,9 @@ Public Module Canvas
 
                 Dim pl As Polyline = New Polyline
 
-                For i = 0 To vertexPos.Count - 1
+                For i = 0 To posVertices.Count - 1
 
-                    pl.AddVertexAt(i, vertexPos(i), bulge, startWidth, endWidth)
+                    pl.AddVertexAt(i, posVertices(i), bulge, startWidth, endWidth)
 
                 Next
 

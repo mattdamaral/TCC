@@ -45,10 +45,11 @@ Public Module Main
 
                     Dim qd As New QD(PedeTextoUsuario("Digite o nome do Quadro de Distribuição (ex.: 'QD01 - Condomínio'): "),
                                      PedeTextoUsuario("Digite o nome do Quadro de ondem este QD deriva (ex.: 'QM01'"),
-                                     CriaCircuitos(blocos, trans))
+                                     CriaCircuitos(blocos, trans), DefineMateriais(blocos, trans))
 
                     qd.DesenhaQC(SelecionaCoordenada())
                     qd.DesenhaDU(SelecionaCoordenada())
+                    qd.DesenhaLM(SelecionaCoordenada())
 
                     trans.Commit()
 
@@ -158,6 +159,70 @@ goto_01:
         Next
 
         Return circuitos
+
+    End Function
+
+    Private Function DefineMateriais(blocos As List(Of BlockReference), trans As Transaction)
+
+        Dim materiais As New List(Of Material)
+
+        For Each bloco As BlockReference In blocos
+
+            Dim ac As AttributeCollection = bloco.AttributeCollection
+            Dim numeroDeAtributosCompativeis As Integer = 0
+
+            'Parâmetros de criação de um material
+            Dim nome As String
+            Dim quantidade As Integer
+
+            For Each objID As ObjectId In ac
+
+                Dim atributo As AttributeReference = CType(trans.GetObject(objID, OpenMode.ForRead), AttributeReference)  'Armazena os atributos
+
+                If atributo.Tag.Contains("LM_") Then
+                    Dim nomeAux As String = atributo.Tag.Replace("LM_", "")
+                    nome = nomeAux.Replace("_", " ")
+                    Dim quantidadeDouble As Double
+                    Double.TryParse(atributo.TextString(), quantidadeDouble)
+                    Integer.TryParse(quantidadeDouble, quantidade)
+
+                    If quantidade > 0 Then
+
+                        If materiais.Count > 0 Then
+
+                            For i = 0 To materiais.Count - 1
+
+                                If materiais(i).GetNome() = nome Then
+
+                                    materiais(i).AdicionaQuantidade(quantidade)
+
+                                    GoTo goto_01
+
+                                End If
+
+                            Next
+
+                            materiais.Add(New Material(nome, quantidade))
+
+                        Else
+
+                            materiais.Add(New Material(nome, quantidade))
+
+                        End If
+
+                        Exit For
+
+                    End If
+
+                End If
+
+goto_01:
+
+            Next
+
+        Next
+
+        Return materiais
 
     End Function
 

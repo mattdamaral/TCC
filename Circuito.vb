@@ -8,7 +8,7 @@ Public Class Circuito
 
     Private numero As String
     Private esquema As String
-    Private tensao As String
+    'Private tensao As String
     Private potencia_total As Double
     Private fases As String
     Private potencia_r As Double
@@ -186,11 +186,11 @@ Public Class Circuito
         Return potencia_total
     End Function
 
-    Public Sub SetPotenciaTotal(_potencia_total)
+    Public Sub SetPotenciaTotal(_potencia_total As Double)
         potencia_total = _potencia_total
     End Sub
 
-    Public Sub AdicionaAPotenciaTotal(_potencia)
+    Public Sub AdicionaAPotenciaTotal(_potencia As Double)
         potencia_total += _potencia
     End Sub
 
@@ -198,24 +198,23 @@ Public Class Circuito
         Return potencia_r
     End Function
 
+    Public Sub SetPotenciaR(_potencia_r As Double)
+        potencia_r = _potencia_r
+    End Sub
+
     Public Function GetPotenciaS()
         Return potencia_s
     End Function
+
+    Public Sub SetPotenciaS(_potencia_s As Double)
+        potencia_s = _potencia_s
+    End Sub
 
     Public Function GetPotenciaT()
         Return potencia_t
     End Function
 
-
-    Public Sub SetPotenciaR(_potencia_r)
-        potencia_r = _potencia_r
-    End Sub
-
-    Public Sub SetPotenciaS(_potencia_s)
-        potencia_s = _potencia_s
-    End Sub
-
-    Public Sub SetPotenciaT(_potencia_T)
+    Public Sub SetPotenciaT(_potencia_T As Double)
         potencia_t = _potencia_T
     End Sub
 
@@ -223,7 +222,7 @@ Public Class Circuito
         Return secao
     End Function
 
-    Public Sub SetSecao(_secao)
+    Public Sub SetSecao(_secao As Double)
         secao = _secao
     End Sub
 
@@ -231,7 +230,7 @@ Public Class Circuito
         Return disjuntor
     End Function
 
-    Public Sub SetDisjuntor(_disjuntor)
+    Public Sub SetDisjuntor(_disjuntor As Integer)
         disjuntor = _disjuntor
     End Sub
 
