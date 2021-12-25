@@ -120,7 +120,7 @@
     <Compile Include="Barramento.vb" />
     <Compile Include="Circuito.vb" />
     <Compile Include="Canvas.vb" />
-    <Compile Include="Class1.vb" />
+    <Compile Include="Norma.vb" />
     <Compile Include="InterfaceACAD.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="Material.vb" />
