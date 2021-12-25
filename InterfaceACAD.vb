@@ -10,13 +10,14 @@ Imports System.Windows
 
 Public Module InterfaceACAD
 
-    Public Function SelecionaCoordenada()
+    Public Function SelecionaCoordenada(msgAoUsuario As String)
 
         'Acessa a base de dados
         Dim doc As Document = Application.DocumentManager.MdiActiveDocument
         Dim ed As Editor = doc.Editor
 
-        Dim posicao As PromptPointResult = ed.GetPoint("Selecione o local onde a tabela será inserida: ")  ' Asks the user for the table's insertion point
+        Dim posicao As PromptPointResult = ed.GetPoint(msgAoUsuario)  ' Asks the user for the table's insertion point
+        'Dim posicao As PromptPointResult = ed.GetPoint("Selecione o local onde a tabela será inserida: ")  ' Asks the user for the table's insertion point
 
         If posicao.Status = PromptStatus.OK Then
             Return posicao.Value
@@ -177,9 +178,10 @@ Public Module InterfaceACAD
             End If
 
             Return False
-
         End Using
 
     End Function
+
+
 
 End Module

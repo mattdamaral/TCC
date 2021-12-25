@@ -149,4 +149,80 @@ Public Module Canvas
         End Using
     End Sub
 
+    Public Sub DesenhaMText(texto As String)
+
+        Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+        Dim db As Database = doc.Database
+        Dim ed As Editor = doc.Editor
+
+        Using trans As Transaction = db.TransactionManager.StartTransaction()
+
+            Dim bt As BlockTable = trans.GetObject(db.BlockTableId, OpenMode.ForRead)
+
+            Using btr As BlockTableRecord = trans.GetObject(bt(BlockTableRecord.ModelSpace), OpenMode.ForWrite)
+
+                'Dim mleader As New MLeader
+                'mleader.SetDatabaseDefaults()
+                'mleader.ContentType = ContentType.MTextContent
+                'Dim mtext As New MText
+                'mtext.SetDatabaseDefaults()
+                'mtext.Height = 8
+                'mtext.SetContentsRtf(texto)
+                ''... https://adndevblog.typepad.com/autocad/2012/05/how-to-create-mleader-objects-in-net.html
+
+
+                Dim mtext As New MText
+                mtext.SetDatabaseDefaults()
+                mtext.Contents = texto
+                mtext.ColorIndex = 7
+                mtext.Location = SelecionaCoordenada()
+                mtext.TextHeight = 8
+                btr.AppendEntity(mtext)
+                trans.AddNewlyCreatedDBObject(mtext, True)
+
+                'Dim mtext As New MText
+                'mtext.SetDatabaseDefaults()
+                'mtext.BackgroundFill = True
+                'mtext.UseBackgroundColor = True
+                'mtext.TextHeight = 8
+                'mtext.Contents = texto
+
+                'Dim posicao As New Point3d
+                'posicao = SelecionaCoordenada()
+
+                'mtext.Location = posicao
+
+                'btr.AppendEntity(mtext)
+                'trans.AddNewlyCreatedDBObject(mtext, True)
+
+                trans.Commit()
+
+            End Using
+
+        End Using
+
+    End Sub
+
+    <CommandMethod("MedePolyline")>
+    Public Sub MedePolyline()
+
+        Dim doc As Document = Application.DocumentManager.MdiActiveDocument
+        Dim db As Database = doc.Database
+        Dim ed As Editor = doc.Editor
+
+        Using trans As Transaction = db.TransactionManager.StartTransaction()
+
+            Dim pl As Polyline = CType(trans.GetObject(RetornaPerimetro(ed).ObjectId, OpenMode.ForRead), Polyline)
+
+            Dim area As Double = (pl.Area) / 10000 'Área englobada pela polyline em metros²
+            Dim perimetro As Double = (pl.Length) / 100 'Perímetro da polyline em metros
+
+            DesenhaMText("Área: " + area.ToString + " m²" + vbNewLine + "Perímetro: " + perimetro.ToString + " m")
+
+            trans.Commit()
+
+        End Using
+
+    End Sub
+
 End Module
