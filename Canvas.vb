@@ -175,7 +175,7 @@ Public Module Canvas
                 mtext.SetDatabaseDefaults()
                 mtext.Contents = texto
                 mtext.ColorIndex = 7
-                mtext.Location = SelecionaCoordenada()
+                mtext.Location = SelecionaCoordenada("Selecione o local onde será inserido o texto com a sugestão: ")
                 mtext.TextHeight = 8
                 btr.AppendEntity(mtext)
                 trans.AddNewlyCreatedDBObject(mtext, True)
