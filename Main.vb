@@ -47,9 +47,9 @@ Public Module Main
                                      PedeTextoUsuario("Digite o nome do Quadro de ondem este QD deriva (ex.: 'QM01'"),
                                      CriaCircuitos(blocos, trans), DefineMateriais(blocos, trans))
 
-                    qd.DesenhaQC(SelecionaCoordenada())
-                    qd.DesenhaDU(SelecionaCoordenada())
-                    qd.DesenhaLM(SelecionaCoordenada())
+                    qd.DesenhaQC(SelecionaCoordenada("Selecione o local onde o Quadro de Cargas será inserido: "))
+                    qd.DesenhaDU(SelecionaCoordenada("Selecione o local onde o Diagrama Unifilar será inserida: "))
+                    qd.DesenhaLM(SelecionaCoordenada("Selecione o local onde a Lista de Materiais será inserida: "))
 
                     trans.Commit()
 
